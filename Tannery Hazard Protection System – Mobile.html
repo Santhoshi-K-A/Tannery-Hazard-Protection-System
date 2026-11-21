@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="mobile-web-app-capable" content="yes">
+<title>THPS Mobile</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1020;--p:#111a2e;--p2:#172340;--ln:#26365c;--tx:#d8e2f5;--mu:#8a9bbf;--cy:#2fd0e0;--vi:#9b7cf0;--ok:#2fd27a;--wn:#f5b02e;--dn:#f0463c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif;background-image:linear-gradient(#1a274a33 1px,transparent 1px),linear-gradient(90deg,#1a274a33 1px,transparent 1px);background-size:32px 32px}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--ln);background:#0d1527ee}
+h1{font-size:16px;margin:0 12px 0 0;letter-spacing:.08em;color:var(--cy)}h1 small{color:var(--mu);font-weight:400;letter-spacing:0}
+nav{display:flex;flex-wrap:wrap;gap:4px}
+button,select,input{font:inherit;color:var(--tx);background:var(--p2);border:1px solid var(--ln);border-radius:5px;padding:5px 9px}
+button{cursor:pointer}button:hover{border-color:var(--cy)}button.on{background:#12485a;border-color:var(--cy)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--ln);background:var(--p)}
+.bar label{color:var(--mu);font-size:12px;display:flex;gap:4px;align-items:center}input[type=number]{width:68px}
+main{padding:12px 14px;max-width:1200px;margin:auto}.v{display:none}.v.on{display:block}
+.g{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.c{background:var(--p);border:1px solid var(--ln);border-radius:8px;padding:10px 12px;min-width:0}
+.c h3{margin:0 0 6px;font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em}
+.big{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}.mu{color:var(--mu)}.sm{font-size:12px}
+.badge{display:inline-block;padding:3px 12px;border-radius:5px;font-weight:700;letter-spacing:.06em}
+.SAFE{background:#0f3d28;color:var(--ok)}.PRE{background:#4a3508;color:var(--wn)}.DANGER{background:#4d1411;color:var(--dn)}.FAULT{background:#3a2a58;color:var(--vi)}
+.led{display:inline-block;width:16px;height:16px;border-radius:50%;margin-right:6px;opacity:.2;vertical-align:middle}.led.a{opacity:1;box-shadow:0 0 10px currentColor}
+.lcd{font:20px/1.2 ui-monospace,Consolas,monospace;background:#8bb86a;color:#1d2b12;padding:8px 10px;border-radius:4px;display:inline-block;white-space:pre;letter-spacing:.05em}
+canvas{width:100%;display:block;border-radius:6px;background:#0b1326}#c3{height:min(62vh,520px);touch-action:none;cursor:grab}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:4px 6px;border-bottom:1px solid var(--ln);text-align:left}td.n,th.n{text-align:right}
+.tbl{overflow-x:auto}.note{border-left:3px solid var(--wn);padding:6px 10px;background:#2a210a;font-size:12px;margin:8px 0}
+.chat{height:300px;overflow:auto;background:#0b1326;border-radius:6px;padding:8px}.m{margin:0 0 8px;white-space:pre-wrap}.m b{color:var(--cy)}.m.u b{color:var(--vi)}
+code,pre{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#9fe3ee}
+h1{font-size:12px;flex:1 1 150px;margin:0}h1 small{display:block}
+button,select,input{font-size:15px;min-height:40px}input[type=checkbox]{min-height:0;width:20px;height:20px}
+summary{padding:10px 14px;cursor:pointer;color:var(--cy);font-size:13px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:20;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:#0d1527;border-top:1px solid var(--ln)}
+nav button{white-space:nowrap;flex:0 0 auto}
+main{padding:10px 10px 90px}.g{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+#c3{height:58vh;min-height:300px}.chat{height:45vh}.big{font-size:24px}.lcd{font-size:17px}
+</style></head><body>
+<header><h1>TANNERY HAZARD PROTECTION SYSTEM <small>Mobile · simulation only</small></h1><span style="display:flex;gap:6px"><button id="run" class="on">▶ Run</button><button id="rst">⟲ Reset</button></span>
+<nav id="nav"></nav></header>
+<details id="dt" style="background:var(--p);border-bottom:1px solid var(--ln)"><summary>⚙ Simulation controls — scenario, ventilation, faults, voice (tap)</summary><div class="bar">
+<label>Speed ×<select id="spd"><option>1</option><option>5</option><option selected>20</option><option>60</option></select></label>
+<label>Scenario<select id="sc"><option value="gradual">Gradual</option><option value="sudden" selected>Sudden</option><option value="repeated">Repeated spikes</option><option value="intermittent">Intermittent</option><option value="sustained">Sustained</option><option value="combined">Combined multi-event</option></select></label>
+<label>Gas<select id="gs"><option value="NH3">NH₃</option><option value="H2S">H₂S</option><option value="both" selected>Both</option></select></label>
+<label>Start s<input id="st" type="number" value="30"></label><label>Dur s<input id="du" type="number" value="400"></label><label>Intensity<input id="in" type="number" step=".1" value="1"></label>
+<label>Ventilation<select id="vm"><option value="auto">Auto (controller)</option><option value="off">Demo: disabled</option><option value="on">Demo: forced on</option></select></label>
+<label>Fault<select id="ft"><option value="none">None</option><option value="nh3dis">NH₃ sensor disconnected</option><option value="h2sdrift">H₂S sensor drift</option><option value="nh3unst">NH₃ unstable reading</option><option value="vfail">Ventilation failure</option><option value="wifi">Wi-Fi link down</option></select></label>
+<label>Alerts<select id="au"><option value="1">Sound+voice</option><option value="0">Silent</option></select></label>
+<label>Voice<select id="vl"><option value="en">English</option><option value="ta">தமிழ்</option><option value="both">Both</option></select></label>
+</div></details>
+<main>
+<section id="v-cmd" class="v on"><div class="g">
+<div class="c"><h3>System state</h3><span id="sys" class="badge SAFE">SAFE</span> <span class="mu sm" id="clk"></span>
+<p style="margin:10px 0 4px"><span class="led" id="lg" style="color:var(--ok);background:var(--ok)"></span><span class="led" id="la" style="color:var(--wn);background:var(--wn)"></span><span class="led" id="lr" style="color:var(--dn);background:var(--dn)"></span><span id="fan" class="sm mu"></span></p>
+<div class="lcd" id="lcd"></div><p class="sm mu" style="margin:6px 0 0">LCD 16×2 (simulated) · alerts run independently of the AI panel</p></div>
+<div class="c"><h3>NH₃ — sensor S-NH3-01 (deliming)</h3><div class="big" id="rn">–</div><div class="sm mu" id="dn"></div></div>
+<div class="c"><h3>H₂S — sensor S-H2S-01 (effluent pit)</h3><div class="big" id="rh">–</div><div class="sm mu" id="dh"></div></div>
+<div class="c" style="grid-column:1/-1"><h3>Live concentration · sensor reading · thresholds (arbitrary units, AU)</h3><canvas id="ch" height="230"></canvas>
+<div class="sm mu">Solid = sensor reading · dashed thin = underlying modelled concentration · cyan NH₃ · green H₂S · amber/red lines = demo pre-warning/danger thresholds</div></div>
+<div class="c"><h3>Controller reasoning</h3><div id="rsn" class="sm"></div></div>
+<div class="c"><h3>Run metrics (this run)</h3><div id="met" class="sm"></div></div>
+</div></section>
+
+<section id="v-3d" class="v"><div class="c"><div style="margin-bottom:6px;display:flex;gap:6px;flex-wrap:wrap"><button data-cam="a">Angled</button><button data-cam="f">Front</button><button data-cam="t">Top</button><button data-cam="s">Side</button><button data-cam="c">Close-up</button><button id="covb">Cover on/off</button><label class="sm mu" style="align-self:center"><input type="checkbox" id="lb" checked> Labels</label><span class="sm mu" style="align-self:center">One finger = rotate · pinch = zoom · tap any part</span></div>
+<canvas id="c3"></canvas><div id="sel" class="sm" style="margin-top:6px">Tap a component for details.</div>
+<div class="note">Illustrative layout of the proposed device. Only the NH₃ and H₂S channels are simulated; the other probes are optional/illustrative expansions and show no data. LCD, LEDs, siren and fan LED are live from the simulation.</div></div></section>
+
+<section id="v-ctl" class="v"><div class="g">
+<div class="c"><h3>Gas-specific demo thresholds (AU)</h3><table><tr><th>Gas</th><th class="n">Pre-warning</th><th class="n">Danger</th></tr>
+<tr><td>NH₃</td><td class="n"><input type="number" step=".01" id="np" value=".30"></td><td class="n"><input type="number" step=".01" id="nd" value=".60"></td></tr>
+<tr><td>H₂S</td><td class="n"><input type="number" step=".01" id="hp" value=".20"></td><td class="n"><input type="number" step=".01" id="hd" value=".45"></td></tr></table>
+<div class="note">Demonstration settings only — not regulatory limits. Real thresholds need applicable standards and site assessment.</div></div>
+<div class="c"><h3>Model parameters</h3><table>
+<tr><td>Removal/dilution k (1/s)</td><td class="n"><input type="number" step=".001" id="pk" value=".01"></td></tr>
+<tr><td>Added ventilation k<sub>v</sub> (1/s)</td><td class="n"><input type="number" step=".005" id="pv" value=".03"></td></tr>
+<tr><td>Sensor time const τ (s)</td><td class="n"><input type="number" id="pt" value="8"></td></tr>
+<tr><td>Noise σ (AU)</td><td class="n"><input type="number" step=".005" id="pn" value=".01"></td></tr>
+<tr><td>Persistence (samples)</td><td class="n"><input type="number" id="pp" value="3"></td></tr>
+<tr><td>Fan hold after SAFE (s)</td><td class="n"><input type="number" id="ph" value="30"></td></tr>
+<tr><td>Random seed</td><td class="n"><input type="number" id="sd" value="42"></td></tr></table><p class="sm mu">Applied on Reset. Hysteresis: state drops only below 90% of its threshold.</p></div>
+<div class="c"><h3>Logic</h3><pre>SAFE→PRE   y ≥ pre for N samples
+PRE→DANGER y ≥ danger for N samples
+DANGER→PRE y &lt; 0.9·danger
+PRE→SAFE   y &lt; 0.9·pre
+sensor NaN → FAULT (fail-safe: fan on)
+system = max(NH3, H2S) priority
+fan: on at PRE/DANGER/FAULT,
+off after SAFE for hold time</pre></div></div></section>
+
+<section id="v-ai" class="v"><div class="c"><h3>AI Assistant</h3>
+<div class="note"><b id="ast">Offline rule-based fallback</b> — ask anything. When this page is connected to Claude (first question asks your permission), answers come from Claude using the live simulation state and the paper data. Otherwise only a limited rule-based fallback (not a language model) answers basic questions.</div>
+<div class="chat" id="chat"></div>
+<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input id="q" style="flex:1;min-width:160px" placeholder="Ask about the current simulation…"><button id="snd">Send</button><button id="mic">🎤</button><button id="clr">Clear</button></div>
+<div class="sm mu" style="margin-top:6px"><label><input type="checkbox" id="tech"> Technical mode</label> · <label><input type="checkbox" id="spk"> Speak replies</label> · AI language <select id="al"><option value="en-IN">English</option><option value="ta-IN">தமிழ்</option></select></div></div></section>
+
+<section id="v-evt" class="v"><div class="c"><h3>Event history</h3><div style="margin-bottom:6px;display:flex;gap:6px"><button id="csv">Download CSV</button><button id="clrev">Clear log</button></div><div class="tbl"><table><thead><tr><th>Sim t</th><th>Gas</th><th class="n">Reading AU</th><th>State</th><th>Decision / event</th><th>Fan</th></tr></thead><tbody id="eb"></tbody></table></div></div></section>
+
+<section id="v-res" class="v"><div class="g">
+<div class="c" style="grid-column:1/-1"><div class="note"><b>Historical research-paper results (preserved as supplied; NOT produced by this run).</b> All values are synthetic simulation units — not experimental validation. The attached PDF itself was not available to me; figures are transcribed from your build brief.</div></div>
+<div class="c tbl"><h3>Six-scenario results</h3><table><tr><th>Scenario</th><th class="n">Ev</th><th class="n">Det</th><th class="n">Peak</th><th class="n">RMSE</th></tr>
+<tr><td>Gradual</td><td class="n">1</td><td class="n">1</td><td class="n">0.784</td><td class="n">0.0431</td></tr><tr><td>Sudden</td><td class="n">1</td><td class="n">1</td><td class="n">1.400</td><td class="n">0.0952</td></tr><tr><td>Repeated spikes</td><td class="n">5</td><td class="n">5</td><td class="n">0.980</td><td class="n">0.1035</td></tr><tr><td>Intermittent</td><td class="n">4</td><td class="n">4</td><td class="n">0.860</td><td class="n">0.0617</td></tr><tr><td>Sustained</td><td class="n">1</td><td class="n">1</td><td class="n">0.840</td><td class="n">0.0309</td></tr><tr><td>Combined</td><td class="n">5</td><td class="n">5</td><td class="n">1.319</td><td class="n">0.1016</td></tr></table></div>
+<div class="c tbl"><h3>Ventilation comparison (paper)</h3><table><tr><th>Metric</th><th class="n">Off</th><th class="n">On</th></tr><tr><td>Peak conc.</td><td class="n">58.18</td><td class="n">23.03</td></tr><tr><td>Time of peak</td><td class="n">7.98 min</td><td class="n">7.98 min</td></tr><tr><td>Recovery</td><td class="n">15.63 min</td><td class="n">0.45 min</td></tr><tr><td>Area above bkg</td><td class="n">39,123.3</td><td class="n">11,193.9</td></tr><tr><td>Fan runtime</td><td class="n">0.00 min</td><td class="n">4.65 min</td></tr></table><p class="sm">Reported reductions: peak 60.4%, area 71.4%.</p></div>
+<div class="c"><h3>Priority-state simulation (paper)</h3><p class="sm">Pre-warning 287 s · Danger 424 s · Danger reset 567 s · Later danger 620 s · Ventilation active 914 s · Peak synthetic reading 97.90 demo units.</p></div>
+<div class="c"><h3>Interactive model equations</h3><pre>dC/dt = S(t) − (k + u·k_v)·C
+dy/dt = (C − y)/τ + σ·ξ(t)
+u = 1 when fan on and not failed</pre><p class="sm mu">Ventilation is modelled only as extra dilution/extraction; it does not destroy or neutralise gas. Single well-mixed zone per gas; no spatial transport.</p></div>
+<div class="c"><h3>Limitations</h3><p class="sm">Computational representation of a proposed invention — not a certified gas-monitoring or emergency device. Simulated fault responses do not prove real-world reliability. Emergency messages direct people to site procedures and qualified personnel. The MQ-4 is methane-oriented and is not used for NH₃/H₂S here; gas-specific sensors are assumed.</p></div>
+</div></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),V=id=>+$(id).value;
+const views=[['cmd','Command Centre'],['3d','3D Device'],['ctl','Controller'],['ai','AI Intelligence'],['evt','Event History'],['res','Research Centre']];
+views.forEach(([k,n])=>{const b=document.createElement('button');b.textContent=n;b.dataset.k=k;b.onclick=()=>show(k);$('nav').appendChild(b)});
+function show(k){document.querySelectorAll('.v').forEach(e=>e.classList.toggle('on',e.id=='v-'+k));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==k));cur=k;if(k=='3d')rs3();if(k=='evt')drawEv();location.hash=k}
+let cur='cmd',S,P,TH,rnd,LOG=[];
+try{LOG=JSON.parse(localStorage.getItem('cortexlog')||'[]')}catch(e){}
+const mk=()=>({C:0,y:0,st:'SAFE',n:0,p:0,pk:0,cpk:0,last:0});
+function reset(){P={k:V('pk'),kv:V('pv'),tau:V('pt'),sig:V('pn'),per:V('pp'),hold:V('ph')};TH={NH3:{pre:V('np'),dan:V('nd')},H2S:{pre:V('hp'),dan:V('hd')}};
+let a=V('sd')>>>0;rnd=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+S={t:0,g:{NH3:mk(),H2S:mk()},fan:false,fanS:0,safeFor:0,sys:'SAFE',h:[],reason:'Waiting for first sample.',dang:0,ev:0,faultT:0};
+log('-','-','SAFE','Simulation reset (seed '+V('sd')+')')}
+function randn(){return Math.sqrt(-2*Math.log(rnd()+1e-12))*Math.cos(6.2832*rnd())}
+function shape(sc,tt,d){if(tt<0||tt>d)return 0;switch(sc){case'gradual':return Math.min(1,tt/(d*.6));case'sudden':return tt<20?2:0;case'repeated':{const p=d/5;return tt%p<15?1.2:0}case'intermittent':return tt%100<60?.9:0;case'sustained':return .9;case'combined':return .5*Math.min(1,tt/(d*.5))+((tt%(d/5))<12?.8:0)}return 0}
+function rel(g){const sel=$('gs').value;if(sel!=='both'&&sel!==g)return 0;return V('in')*(g=='H2S'?.8:1)*P.k*shape($('sc').value,S.t-V('st'),V('du'))}
+function log(g,y,st,txt){const r={t:Math.round(S?S.t:0),g,y:(typeof y=='number'&&isFinite(y))?+y.toFixed(3):'-',st,txt,fan:S&&S.fan?'ON':'OFF'};LOG.push(r);if(LOG.length>500)LOG.shift();try{localStorage.setItem('cortexlog',JSON.stringify(LOG))}catch(e){}if(cur=='evt')drawEv()}
+const nm={NH3:'Ammonia',H2S:'Hydrogen sulphide'};
+function step(){const f=$('ft').value,vf=f=='vfail',vent=S.fan&&!vf;S.t++;
+for(const g of['NH3','H2S']){const s=S.g[g];s.C=Math.max(0,s.C+rel(g)-(P.k+(vent?P.kv:0))*s.C);
+let sg=P.sig*(g=='NH3'&&f=='nh3unst'?8:1);s.y+=(s.C-s.y)/P.tau+sg*randn()*.3;if(s.y<0)s.y=0;
+let m=s.y;if(g=='H2S'&&f=='h2sdrift')m+=.0006*Math.max(0,S.t-V('st'));if(g=='NH3'&&f=='nh3dis')m=NaN;s.m=m;
+s.pk=Math.max(s.pk,s.C);s.cpk=Math.max(s.cpk,isFinite(m)?m:0);
+const th=TH[g],o=s.st;let n=o;
+if(!isFinite(m)){n='FAULT';s.n=0;s.p=0}
+else{if(o=='FAULT')n='SAFE';s.n=m>=th.dan?s.n+1:0;s.p=m>=th.pre?s.p+1:0;
+if(s.n>=P.per)n='DANGER';
+else if(o=='DANGER'){n=m<th.dan*.9?(m>=th.pre?'PRE':'SAFE'):'DANGER'}
+else if(s.p>=P.per)n='PRE';
+else if(n=='PRE'&&m<th.pre*.9)n='SAFE'}
+if(n!=o){s.st=n;trans(g,o,n,m)}}
+const R=['SAFE','PRE','DANGER'],sts=['NH3','H2S'].map(g=>S.g[g].st);let sys=sts.includes('DANGER')?'DANGER':sts.includes('PRE')?'PRE':sts.includes('FAULT')?'FAULT':'SAFE';
+if(sys!=S.sys){S.sys=sys}
+const vm=$('vm').value;let want=(sys!='SAFE');
+if(vm=='auto'){if(want)S.safeFor=0;else S.safeFor++;const on=want||(S.fan&&S.safeFor<P.hold);if(on!=S.fan){S.fan=on&&!vf;log('-','-',sys,on?(vf?'Ventilation requested but FAILED (fault injected)':'Ventilation ON (auto)'):'Ventilation OFF (recovery hold elapsed)')}}
+else{const on=vm=='on'&&!vf;if(on!=S.fan){S.fan=on;log('-','-',sys,on?'Ventilation ON (demo override)':'Ventilation OFF (demo override)')}}
+if(vf&&S.fan){S.fan=false}
+if(S.fan)S.fanS++;if(sys=='DANGER')S.dang++;
+S.h.push([S.g.NH3.C,S.g.NH3.m,S.g.H2S.C,S.g.H2S.m,S.fan?1:0]);if(S.h.length>3000)S.h.shift()}
+function trans(g,o,n,m){const th=TH[g];let txt;
+if(n=='DANGER'){txt=`${nm[g]} simulated reading ${m.toFixed(3)} AU crossed configured danger threshold ${th.dan} AU (persisted ${P.per} samples). Danger state activated. Ventilation response requested.`;S.dang0=S.t}
+else if(n=='PRE')txt=o=='DANGER'?`${nm[g]} fell below 90% of danger threshold (hysteresis). Returned to PRE-WARNING.`:`${nm[g]} reading ${m.toFixed(3)} AU crossed pre-warning threshold ${th.pre} AU. Pre-warning activated.`;
+else if(n=='FAULT')txt=`${nm[g]} sensor reading missing/invalid. FAULT flagged; fail-safe ventilation requested. Alarm logic for this gas unavailable.`;
+else txt=`${nm[g]} reading ${isFinite(m)?m.toFixed(3):'-'} AU below 90% of pre-warning threshold. Recovery to SAFE.`;
+S.reason=txt;log(g,m,n,txt);S.ev++;
+if($('ft').value=='wifi')log(g,m,n,'Cloud/Wi-Fi link down: local LED/LCD/alarm continue; remote reporting would queue (not modelled).');
+alarm(g,n)}
+let ac;function beep(f,d,w){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),gn=ac.createGain();o.frequency.value=f;o.type='square';gn.gain.value=.05;o.connect(gn);gn.connect(ac.destination);o.start(w);o.stop(w+d)}catch(e){}}
+function alarm(g,n){if($('au').value!='1'||n=='SAFE')return;try{const t=(ac&&ac.currentTime)||0;if(n=='PRE'){beep(660,.25,t)}else if(n=='DANGER'||n=='FAULT'){beep(900,.2,t);beep(600,.2,t+.25);beep(900,.2,t+.5)}
+if(!window.speechSynthesis)return;const L=$('vl').value;const say=(tx,l)=>{const u=new SpeechSynthesisUtterance(tx);u.lang=l;speechSynthesis.speak(u)};
+const nmEn=g=='NH3'?'Ammonia':'Hydrogen sulphide';
+if(L!='ta')say(n=='PRE'?`Warning: ${nmEn} level has increased.`:n=='DANGER'?'High danger condition detected. Follow the site\'s emergency procedure.':'Sensor fault detected. Contact qualified personnel.','en-IN');
+if(L!='en')say(n=='PRE'?'எச்சரிக்கை: வாயு அளவு அதிகரித்துள்ளது.':n=='DANGER'?'ஆபத்து எச்சரிக்கை: வாயு அளவு அதிகரித்துள்ளது. தளத்தின் அவசர நடைமுறையைப் பின்பற்றவும்.':'சென்சார் கோளாறு. தகுதியான பணியாளரைத் தொடர்பு கொள்ளவும்.','ta-IN')}catch(e){}}
+/* ---------- UI ---------- */
+const fmt=x=>isFinite(x)?x.toFixed(3):'NO DATA';
+function ui(){const n=S.g.NH3,h=S.g.H2S;$('sys').textContent=S.sys=='PRE'?'PRE-WARNING':S.sys;$('sys').className='badge '+S.sys;
+$('clk').textContent=`t = ${S.t} s (sim) · ${$('ft').value=='none'?'no fault':'fault: '+$('ft').selectedOptions[0].text}`;
+$('lg').classList.toggle('a',S.sys=='SAFE');$('la').classList.toggle('a',S.sys=='PRE'||S.sys=='FAULT');$('lr').classList.toggle('a',S.sys=='DANGER');
+$('fan').textContent=`Ventilation fan: ${S.fan?'ON':'OFF'} (${$('vm').selectedOptions[0].text})`;
+$('lcd').textContent=(('N'+(isFinite(n.m)?n.m.toFixed(2):'--')).padEnd(8)+('H'+(isFinite(h.m)?h.m.toFixed(2):'--')).padEnd(8)).slice(0,16)+'\n'+((S.sys=='PRE'?'PRE-WARN':S.sys).padEnd(9)+'FAN:'+(S.fan?'ON':'OFF')).padEnd(16).slice(0,16);
+$('rn').textContent=fmt(n.m)+' AU';$('rh').textContent=fmt(h.m)+' AU';
+$('dn').textContent=`state ${n.st} · model C ${n.C.toFixed(3)} · thresholds ${TH.NH3.pre}/${TH.NH3.dan}`;$('dh').textContent=`state ${h.st} · model C ${h.C.toFixed(3)} · thresholds ${TH.H2S.pre}/${TH.H2S.dan}`;
+$('rsn').textContent=S.reason+(S.sys!='SAFE'?' Follow the site\'s emergency procedure; contact qualified personnel.':'');
+$('met').innerHTML=`Peak NH₃ conc. ${n.pk.toFixed(3)} · peak H₂S ${h.pk.toFixed(3)} AU<br>Fan runtime ${(S.fanS/60).toFixed(2)} min<br>Time in DANGER ${(S.dang/60).toFixed(2)} min<br>State events ${S.ev}<br><span class="mu">New simulation values; not the paper's results.</span>`;
+chart();if(cur=='3d')upd3()}
+function chart(){const c=$('ch'),w=c.clientWidth;if(!w)return;c.width=w*devicePixelRatio;c.height=230*devicePixelRatio;const x=c.getContext('2d');x.scale(devicePixelRatio,devicePixelRatio);const H=230,N=Math.max(S.h.length,600),d=S.h.slice(-N),mx=Math.max(1.2,...d.map(r=>Math.max(r[0],r[2])));
+const X=i=>30+(w-40)*i/(N-1)+((N-d.length)*0),Y=v=>H-18-(H-30)*v/mx;x.font='10px sans-serif';x.fillStyle='#8a9bbf';x.strokeStyle='#26365c';
+for(let v=0;v<=mx;v+=.2){x.beginPath();x.moveTo(30,Y(v));x.lineTo(w-8,Y(v));x.stroke();x.fillText(v.toFixed(1),2,Y(v)+3)}
+const line=(i,col,dash,wd)=>{x.beginPath();x.strokeStyle=col;x.lineWidth=wd;x.setLineDash(dash);let s=false;d.forEach((r,k)=>{const v=r[i];if(!isFinite(v)){s=false;return}const px=30+(w-40)*k/(N-1),py=Y(v);s?x.lineTo(px,py):x.moveTo(px,py);s=true});x.stroke();x.setLineDash([])};
+const th=(v,c)=>{x.strokeStyle=c;x.setLineDash([2,4]);x.beginPath();x.moveTo(30,Y(v));x.lineTo(w-8,Y(v));x.stroke();x.setLineDash([])};
+th(TH.NH3.pre,'#f5b02e');th(TH.NH3.dan,'#f0463c');
+line(0,'#2fd0e066',[3,3],1);line(2,'#2fd27a66',[3,3],1);line(1,'#2fd0e0',[],1.6);line(3,'#2fd27a',[],1.6);
+x.fillStyle='#9b7cf055';d.forEach((r,k)=>{if(r[4])x.fillRect(30+(w-40)*k/(N-1),H-14,2,6)});x.fillStyle='#8a9bbf';x.fillText('fan on',w-46,H-4)}
+function drawEv(){$('eb').innerHTML=LOG.slice(-100).reverse().map(r=>`<tr><td>${r.t}</td><td>${r.g}</td><td class="n">${r.y}</td><td>${r.st}</td><td>${String(r.txt).replace(/</g,'&lt;')}</td><td>${r.fan}</td></tr>`).join('')}
+$('csv').onclick=()=>{const t='sim_t_s,gas,reading_AU,state,event,fan\n'+LOG.map(r=>[r.t,r.g,r.y,r.st,'"'+String(r.txt).replace(/"/g,'""')+'"',r.fan].join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));a.download='thps_events.csv';a.click()};
+$('clrev').onclick=()=>{LOG=[];try{localStorage.removeItem('cortexlog')}catch(e){}drawEv()};
+/* ---------- loop ---------- */
+let running=true,acc=0,lu=0,lt=performance.now();
+$('run').onclick=()=>{running=!running;$('run').textContent=running?'⏸ Pause':'▶ Run';$('run').classList.toggle('on',running);if(running&&ac&&ac.resume)ac.resume()};
+$('run').textContent='⏸ Pause';
+$('rst').onclick=()=>{reset();ui()};
+function loop(now){const dt=Math.min(.25,(now-lt)/1000);lt=now;if(running){acc+=dt*V('spd');while(acc>=1){step();acc--}}
+if(now-lu>180){lu=now;ui()}if(cur=='3d')r3();requestAnimationFrame(loop)}
+/* ---------- AI fallback ---------- */
+function ans(q){q=q.toLowerCase();const t=$('tech').checked,n=S.g.NH3,h=S.g.H2S,L=(g,s)=>`${nm[g]}: ${fmt(s.m)} AU (state ${s.st})`;let a;
+if(/fault|sensor.*(fail|problem)/.test(q)){const f=['NH3','H2S'].filter(g=>S.g[g].st=='FAULT');a=`[LIVE] Injected fault: ${$('ft').value}. Sensors in FAULT: ${f.join(', ')||'none'}.`}
+else if(/disable|without vent|ventilation.*off|no fan/.test(q))a=`[MODEL] With the fan off the removal term is only k=${P.k}/s instead of k+k_v=${(P.k+P.kv).toFixed(3)}/s, so concentration peaks higher and recovers slower. Set Ventilation to "Demo: disabled" and rerun to see it. [PAPER, historical] Paper: peak 58.18 → 23.03 (−60.4%), recovery 15.63 → 0.45 min.`;
+else if(/why.*(fan|vent)|fan activ/.test(q))a=`[LIVE] Fan is ${S.fan?'ON':'OFF'} (mode ${$('vm').value}). Auto logic turns it on at PRE-WARNING, DANGER or sensor FAULT, and off after ${P.hold}s of SAFE. Last controller note: ${S.reason}`;
+else if(/why|danger|threshold|cross/.test(q))a=`[LIVE] System state ${S.sys}. ${S.reason} Thresholds (demo, AU): NH₃ ${TH.NH3.pre}/${TH.NH3.dan}, H₂S ${TH.H2S.pre}/${TH.H2S.dan}.`+(t?` Rule: state rises after ${P.per} consecutive samples ≥ threshold; falls below 90% of threshold (hysteresis).`:'');
+else if(/compare|both|gas/.test(q))a=`[LIVE] ${L('NH3',n)}; ${L('H2S',h)}. Peak model conc.: NH₃ ${n.pk.toFixed(3)}, H₂S ${h.pk.toFixed(3)}. Gases use separate thresholds and H₂S release is scaled to 0.8× in this demo.`;
+else if(/ammonia|nh3|reading|current|right now|happening/.test(q))a=`[LIVE] t=${S.t}s. System ${S.sys}. ${L('NH3',n)}; ${L('H2S',h)}. Fan ${S.fan?'ON':'OFF'}. Sensor lags the true model value (τ=${P.tau}s), so readings trail the real concentration.`;
+else if(/last event|summar|what happened/.test(q)){const r=LOG.slice(-4).map(r=>`t=${r.t}s ${r.g} ${r.st}: ${r.txt}`).join('\n');a=`[LIVE] Run summary: ${S.ev} state events, fan ${(S.fanS/60).toFixed(2)} min, ${(S.dang/60).toFixed(2)} min in DANGER.\nRecent log:\n${r}`}
+else if(/math|equation|model|how.*work/.test(q))a=`[MODEL] dC/dt = S(t) − (k + u·k_v)·C, with k=${P.k}, k_v=${P.kv}; sensor dy/dt=(C−y)/τ + noise (τ=${P.tau}s, σ=${P.sig}). u=1 when fan runs. Ventilation is dilution/extraction only.`+(t?' Discrete step Δt=1s (Euler). Steady state under constant release: C=S/k (or S/(k+k_v) with fan).':' In simple terms: gas builds up from a release and drains away; the fan makes it drain faster; the sensor is a bit slow to notice.');
+else if(/limit/.test(q))a='[MODEL] Single well-mixed zone per gas, no spatial dispersion, arbitrary units (AU), demo thresholds, simplified sensor. Not experimentally validated; not a certified safety device.';
+else a='I can answer (offline, rule-based) about: current readings, why danger/fan, comparing gases, faults, last event/summary, equations, limitations, ventilation off. Tags: [LIVE] state, [PAPER] historical results, [MODEL] equations.';
+return a}
+function say(w,t){const d=document.createElement('div');d.className='m '+(w=='You'?'u':'');d.innerHTML='<b></b> ';d.firstChild.textContent=w+': ';d.append(t);$('chat').appendChild(d);$('chat').scrollTop=1e9;return d}
+let SM=null,HIST=[];
+if(window.claude&&claude.use)claude.use('sample').then(x=>{SM=x;if(x)$('ast').textContent='Connected to Claude (live answers)'}).catch(()=>{});
+const KB=`You are AI Assistant inside a simulation-only digital twin of the Tannery Hazard Protection System (THPS), a proposed 5-stage tannery NH3/H2S gas-hazard system: 1 Sensing (gas-specific NH3 and H2S sensors; the MQ-4 is methane-oriented and NOT used for them), 2 Interpretation (ESP32 controller assumed: SAFE/PRE-WARNING/DANGER, gas-specific thresholds, hysteresis, persistence, fault detection), 3 Communication (green/amber/red LEDs, 16x2 I2C LCD, buzzer/siren, DFPlayer Mini + SD + speaker bilingual Tamil/English voice, LD3320 voice recognition, ESP8266 Wi-Fi), 4 Mitigation (relay-driven ventilation fan, modelled only as extra dilution), 5 Recording (event log, CSV). Power: SMPS + DC-DC buck; electronics cooling fan. Exact electrical arrangement and ESP32/ESP8266 roles are not finalised. Model: dC/dt=S(t)-(k+u*kv)C; sensor dy/dt=(C-y)/tau+noise; Euler step 1 s; units are arbitrary (AU); thresholds are demo values. Paper results (historical, synthetic, not experimentally validated, not from this run): six scenarios all events detected (peaks 0.784,1.400,0.980,0.860,0.840,1.319 AU; RMSE 0.0431,0.0952,0.1035,0.0617,0.0309,0.1016); priority simulation pre-warning 287 s, danger 424 s, reset 567 s, later danger 620 s, ventilation 914 s, peak 97.90 demo units; ventilation off/on: peak 58.18/23.03 (-60.4%), recovery 15.63/0.45 min, area above background 39123.3/11193.9 (-71.4%), fan runtime 0/4.65 min. In the 3D device view, probes other than NH3/H2S (CH4 MQ-4, CO, O2, VOC, temperature, humidity, pressure, airflow) are optional/illustrative labels and NOT simulated; the extra NH3/H2S probes mirror one single-zone model. Rules: tag claims [LIVE] (simulation state), [PAPER], [MODEL] or [GENERAL]; never invent readings; say when data is unavailable; never imply real-world validation or certified safety; for emergencies point to site procedures and qualified personnel; never tell anyone to enter or stay in a hazardous area. Answer ANY question the user asks, including general science, tannery chemistry, electronics, coding or unrelated topics, honestly noting uncertainty.`;
+async function ask(){const q=$('q').value.trim();if(!q)return;$('q').value='';say('You',q);HIST.push('User: '+q);let a=null,src='offline rule-based',el=null;
+if(SM){el=say('THPS (Claude)','Thinking…');try{const gg=g=>({reading_AU:isFinite(S.g[g].m)?S.g[g].m:null,model_C:S.g[g].C,state:S.g[g].st,peak_model_C:S.g[g].pk});
+const st={sim_time_s:S.t,system_state:S.sys,fan_on:S.fan,fault:$('ft').value,vent_mode:$('vm').value,scenario:{type:$('sc').value,gas:$('gs').value,start_s:V('st'),dur_s:V('du'),intensity:V('in')},NH3:gg('NH3'),H2S:gg('H2S'),thresholds_AU:TH,params:P,fan_runtime_s:S.fanS,danger_time_s:S.dang,last_controller_note:S.reason,recent_events:LOG.slice(-12)};
+const p=KB+'\n\nLIVE STATE: '+JSON.stringify(st)+'\n\nMode: '+($('tech').checked?'TECHNICAL (equations, assumptions, detail)':'SIMPLE (plain language for a general audience / science-fair judges)')+'. Reply in '+($('al').value=='ta-IN'?'Tamil':'English')+'.\n\nConversation so far:\n'+HIST.slice(-8).join('\n')+'\n\nAnswer the latest user message now.';
+const r=await SM(p,{cache:false,onText:({text})=>{el.lastChild.nodeValue=text}});a=r.text;el.lastChild.nodeValue=a}catch(e){el.remove();el=null;a=null;if(e&&e.code=='not_granted'){SM=null;$('ast').textContent='Offline rule-based fallback (permission declined)'}}}
+if(!a){a=ans(q);if(SM||true)say('THPS ('+src+')',a)}
+HIST.push('THPS: '+a);if($('spk').checked&&window.speechSynthesis){const u=new SpeechSynthesisUtterance(a);u.lang=$('al').value;speechSynthesis.speak(u)}}
+$('snd').onclick=ask;$('q').onkeydown=e=>{if(e.key=='Enter')ask()};$('clr').onclick=()=>$('chat').innerHTML='';
+$('mic').onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){say('THPS','Speech recognition is not supported in this browser.');return}const r=new R();r.lang=$('al').value;r.onresult=e=>{$('q').value=e.results[0][0].transcript;ask()};r.onerror=()=>say('THPS','Microphone unavailable or permission denied.');r.start()};
+/* ---------- 3D ---------- */
+let R3,sc3,cam,sensors=[],th=.5,ph=1.3,rad=16,tg,ok3=false,labels=[],PK=[],lcdc,lcdTex,leds=[],siren,cover,fanLed,selo=null,dev;
+function lab(t,x,y,z,wu,par){const c=document.createElement('canvas');c.width=256;c.height=48;const g=c.getContext('2d');g.fillStyle='rgba(10,16,32,.88)';g.fillRect(0,0,256,48);g.strokeStyle='#2fd0e0';g.lineWidth=2;g.strokeRect(1,1,254,46);g.fillStyle='#d8e2f5';let f=24;g.font='bold '+f+'px sans-serif';while(g.measureText(t).width>238&&f>8){f--;g.font='bold '+f+'px sans-serif'}g.textAlign='center';g.fillText(t,128,24+f/3);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));sp.scale.set(wu,wu*48/256,1);sp.position.set(x,y,z);sp.renderOrder=9;(par||sc3).add(sp);labels.push(sp);return sp}
+function buildDevice(){
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.6,metalness:.4},o||{}));
+dev=new THREE.Group();sc3.add(dev);const bm=M(0x1a2440);
+const bx=(w,h,d,x,y,z,n)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),bm);m.position.set(x,y,z);dev.add(m);if(n){m.userData={n,d:'Rectangular wall-mounted enclosure housing the controller, communication, relay and power electronics. Internal layout is illustrative; the final arrangement remains to be finalised.'};PK.push(m)}return m};
+bx(10,6,.2,0,0,-.7,'Enclosure back plate');bx(10,.2,1.6,0,3.1,0);bx(10,.2,1.6,0,-3.1,0);bx(.2,6.4,1.6,-5.1,0,0);bx(.2,6.4,1.6,5.1,0,0);
+dev.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(10.4,6.4,1.6)),new THREE.LineBasicMaterial({color:0x2fd0e0})));
+cover=new THREE.Mesh(new THREE.BoxGeometry(10.4,6.4,.08),new THREE.MeshStandardMaterial({color:0x9fd8ff,transparent:true,opacity:.14}));cover.position.z=.84;cover.userData={n:'Transparent front cover',d:'Allows the internal electronics to be inspected. Toggle with Cover on/off.'};dev.add(cover);PK.push(cover);
+const part=(n,d,x,y,w,h,c,lb)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,.4),M(c));m.position.set(x,y,-.35);m.userData={n,d,k:'x'};dev.add(m);PK.push(m);lab(lb,x,y,.95,Math.max(1.3,Math.min(w*1.1,2.1)),dev)};
+part('ESP32','Assumed main controller: reads gas channels, runs SAFE / PRE-WARNING / DANGER logic, drives LEDs, LCD and relay. Exact role split with the ESP8266 is to be finalised.',-3.6,.8,2,1.2,0x1f3a5f,'ESP32');
+part('ESP8266','Assumed Wi-Fi / communication module. Role and wiring to be finalised.',-1.3,.8,1.8,1.2,0x1f4a5f,'ESP8266');
+part('LD3320 voice recognition','Voice-recognition module (input). Integration details to be finalised.',.9,.8,1.8,1.2,0x3a2a58,'LD3320');
+part('DFPlayer Mini','Plays stored Tamil/English audio files from the SD card to the speaker.',3,.8,1.6,1.2,0x2a4a3a,'DFPlayer');
+part('I²C interface (LCD backpack)','Connects the 16×2 LCD to the controller over two wires (SDA, SCL).',-4.2,2.3,1,.4,0x4a4a2a,'I²C');
+part('microSD card','Stores the bilingual voice-announcement audio files for the DFPlayer Mini.',-4,-.7,.9,.9,0x444444,'SD card');
+part('Relay module','Switches the ventilation fan when the controller requests it. Real fan/mains wiring needs qualified electrical engineering.',-2.5,-.7,1.6,.9,0x6a2a2a,'Relay');
+part('SMPS','Switch-mode power supply feeding the unit.',-.2,-.7,2.4,1,0x555a6a,'SMPS');
+part('DC–DC buck converter','Steps the supply down to the logic voltage rail.',2.1,-.7,1.4,.9,0x2a5a6a,'Buck');
+part('Electronics-cooling fan','Small fan cooling the enclosure electronics.',4,-.7,1,1,0x667788,'Cool fan');
+part('Ventilation-fan output terminal','Relay-switched output to the (external) ventilation fan.',-2.5,-1.8,1.6,.5,0x7a5a2a,'Fan out');
+part('Sensor I/O terminal block','Connects the gas-sensor probes to the controller.',0,-1.8,2.4,.5,0x2a2a5a,'Sensor I/O');
+part('Power-in terminal','Supply input to the SMPS. Mains wiring requires qualified electricians.',3.2,-1.8,1.4,.5,0x7a2a2a,'Power in');
+const wire=(p,c)=>{dev.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(p.map(q=>new THREE.Vector3(q[0],q[1],-.1))),new THREE.LineBasicMaterial({color:c})))};
+wire([[3.2,-1.55],[.5,-1.55],[.5,-1.2]],0xf0463c);wire([[1,-.7],[1.4,-.7]],0xf0463c);wire([[2.1,-.25],[2.1,.05],[-3.6,.05],[-3.6,.2]],0xf0463c);
+wire([[-2.6,.8],[-2.2,.8]],0x2fd0e0);wire([[-3.2,.2],[-3.2,-.15],[-2.5,-.15],[-2.5,-.25]],0x2fd0e0);wire([[-3.6,1.4],[-3.6,1.55],[3,1.55],[3,1.4]],0x2fd0e0);wire([[-3.9,1.4],[-3.9,1.9],[-4.2,1.9],[-4.2,2.1]],0x2fd0e0);wire([[-2.5,-1.15],[-2.5,-1.55]],0xf5b02e);wire([[0,-2.05],[0,-3.1]],0x2fd0e0);
+const face=(g,mat,x,y,z,n,d,lb,wu,ly,k)=>{const m=new THREE.Mesh(g,mat);m.position.set(x,y,z);m.userData={n,d,k:k||'x'};dev.add(m);PK.push(m);if(lb)lab(lb,x,ly==null?y-.5:ly,1.05,wu||1,dev);return m};
+const bez=new THREE.Mesh(new THREE.BoxGeometry(3.4,1.2,.06),M(0x0d1220));bez.position.set(-2.2,2.1,.9);dev.add(bez);
+lcdc=document.createElement('canvas');lcdc.width=256;lcdc.height=64;lcdTex=new THREE.CanvasTexture(lcdc);
+face(new THREE.PlaneGeometry(3.1,1),new THREE.MeshBasicMaterial({map:lcdTex}),-2.2,2.1,.94,'16×2 LCD (I²C)','Shows live gas readings, safety state and fan status (live in this simulation).','LCD 16×2',1.5,2.95);
+[['Green LED — SAFE',0x2fd27a,'SAFE'],['Amber LED — PRE-WARNING',0xf5b02e,'PRE'],['Red LED — DANGER',0xf0463c,'DANGER']].forEach(([n,c,l],i)=>leds.push(face(new THREE.SphereGeometry(.22,16,16),new THREE.MeshBasicMaterial({color:c}),.5+i*.85,2.3,.95,n,'Visual state indicator driven by the controller.',l,.95,1.75)));
+fanLed=face(new THREE.SphereGeometry(.22,16,16),new THREE.MeshBasicMaterial({color:0x2fd0e0}),3.1,2.3,.95,'Ventilation-fan status LED','Lit while the ventilation response is running.','FAN',.8,1.75);
+face(new THREE.CylinderGeometry(.5,.5,.1,24).rotateX(Math.PI/2),M(0x222a3a),3.8,-2.5,.9,'Speaker','Plays DFPlayer audio: bilingual voice alerts and alarm tones.','Speaker',1.2,-2.5);
+face(new THREE.CylinderGeometry(.28,.28,.2,16).rotateX(Math.PI/2),M(0x111111),1.8,-2.5,.9,'Buzzer','Distinct pre-warning and danger tones.','Buzzer',1,-2.5);
+face(new THREE.SphereGeometry(.18,12,12),M(0x888888),-.2,-2.5,.9,'Microphone','Voice input to the LD3320 module.','Mic',.8,-2.5);
+siren=face(new THREE.CylinderGeometry(.35,.5,.6,16),new THREE.MeshBasicMaterial({color:0x4a1a18}),3.8,3.7,0,'Siren','Loud alarm indicator for DANGER (simulated).','Siren',1,4.3);
+face(new THREE.CylinderGeometry(.06,.06,1.4,8),M(0xaaaaaa),-4,3.8,0,'Wi-Fi antenna','Antenna for the Wi-Fi module.','Wi-Fi antenna',1.4,4.8);
+const SN=[['NH3-1','NH3','S-NH3-01 — ammonia sensor (simulated). Gas-specific type assumed.'],['NH3-2','NH3','S-NH3-02 — redundant ammonia probe; mirrors the single-zone NH₃ model.',1],['H2S-1','H2S','S-H2S-01 — hydrogen sulphide sensor (simulated). Gas-specific type assumed.'],['H2S-2','H2S','S-H2S-02 — redundant H₂S probe; mirrors the single-zone H₂S model.',1],
+['CH4 MQ-4',0,'MQ-4 is methane-oriented — NOT an NH₃/H₂S sensor. Optional expansion; not simulated.'],['CO',0,'Carbon-monoxide sensor. Optional expansion; not simulated.'],['O2',0,'Oxygen-level sensor. Optional expansion; not simulated.'],['VOC',0,'Volatile-organic-compound sensor. Optional expansion; not simulated.'],['Temp',0,'Temperature sensor. Optional expansion; not simulated.'],['Humidity',0,'Humidity sensor. Optional expansion; not simulated.'],['Pressure',0,'Pressure sensor. Optional expansion; not simulated.'],['Airflow',0,'Airflow (anemometer) sensor. Optional expansion; not simulated.']];
+SN.forEach(([n,g,d,r],i)=>{const x=-4.4+i*.8,m=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,1,16),new THREE.MeshBasicMaterial({color:g?0x2fd27a:0x9b7cf0}));m.position.set(x,-3.6,.1);m.userData=g?{n,g,k:'s',r,d}:{n,k:'x',d};dev.add(m);PK.push(m);if(g)sensors.push(m);lab(n,x,-4.5-(i%2)*.55,.3,1.5,dev)});
+lab('TANNERY HAZARD PROTECTION SYSTEM',0,3.9,.9,5.6,dev)}
+function init3(){const cv=$('c3');if(!window.THREE){$('sel').textContent='3D library failed to load (offline?). Other pages still work.';return}
+try{R3=new THREE.WebGLRenderer({canvas:cv,antialias:true})}catch(e){$('sel').textContent='WebGL unavailable.';return}
+sc3=new THREE.Scene();sc3.background=new THREE.Color(0x0b1326);cam=new THREE.PerspectiveCamera(45,1,.1,200);tg=new THREE.Vector3(0,-.4,0);
+sc3.add(new THREE.AmbientLight(0x99aacc,.75));const dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(6,10,12);sc3.add(dl);const d2=new THREE.DirectionalLight(0x6688ff,.4);d2.position.set(-8,-4,8);sc3.add(d2);
+const gr=new THREE.GridHelper(40,40,0x26365c,0x16213f);gr.position.y=-7;sc3.add(gr);
+buildDevice();
+const dn=new THREE.Raycaster(),mv=new THREE.Vector2();let drag=null,moved=0;
+const PT=new Map();let pd=0;
+cv.onpointerdown=e=>{PT.set(e.pointerId,[e.clientX,e.clientY]);moved=0;cv.setPointerCapture(e.pointerId);if(PT.size==2){const [p,q]=[...PT.values()];pd=Math.hypot(p[0]-q[0],p[1]-q[1])}};
+cv.onpointermove=e=>{if(!PT.has(e.pointerId))return;const o=PT.get(e.pointerId);PT.set(e.pointerId,[e.clientX,e.clientY]);if(PT.size==1){th-=(e.clientX-o[0])*.008;ph=Math.min(1.6,Math.max(.1,ph-(e.clientY-o[1])*.006));moved+=Math.abs(e.clientX-o[0])+Math.abs(e.clientY-o[1])}else if(PT.size==2){const [p,q]=[...PT.values()],d=Math.hypot(p[0]-q[0],p[1]-q[1]);if(pd&&d)rad=Math.min(60,Math.max(4,rad*pd/d));pd=d;moved+=10}};
+cv.onpointerup=cv.onpointercancel=e=>{const was=PT.size==1&&PT.has(e.pointerId);PT.delete(e.pointerId);pd=0;if(was&&moved<6&&e.type=='pointerup'){const r=cv.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);dn.setFromCamera(mv,cam);const h=dn.intersectObjects(PK,true)[0];if(h){selo=h.object;upd3()}}};
+cv.onwheel=e=>{e.preventDefault();rad=Math.min(60,Math.max(4,rad+e.deltaY*.02))};
+document.querySelectorAll('[data-cam]').forEach(b=>b.onclick=()=>{const k=b.dataset.cam;tg.set(0,-.4,0);const F=fit();if(k=='f'){th=0;ph=1.5;rad=F}if(k=='a'){th=.5;ph=1.3;rad=F*1.05}if(k=='t'){th=0;ph=.15;rad=F*1.1}if(k=='s'){th=1.5;ph=1.5;rad=Math.max(14,F*.9)}if(k=='c'){th=0;ph=1.5;rad=F*.5;tg.set(-1,1,0)}});
+$('lb').onchange=()=>labels.forEach(l=>l.visible=$('lb').checked);$('covb').onclick=()=>cover.visible=!cover.visible;
+ok3=true;new ResizeObserver(rs3).observe(cv.parentElement)}
+function upd3(){if(!ok3)return;const g=lcdc.getContext('2d');g.fillStyle='#8bb86a';g.fillRect(0,0,256,64);g.fillStyle='#1d2b12';g.font='bold 25px monospace';const Ls=$('lcd').textContent.split('\n');g.fillText(Ls[0]||'',2,26);g.fillText(Ls[1]||'',2,56);lcdTex.needsUpdate=true;
+const on=[S.sys=='SAFE',S.sys=='PRE'||S.sys=='FAULT',S.sys=='DANGER'],cc=[0x2fd27a,0xf5b02e,0xf0463c];leds.forEach((l,i)=>l.material.color.setHex(on[i]?cc[i]:0x1a2230));fanLed.material.color.setHex(S.fan?0x2fd0e0:0x14323a);siren.material.color.setHex(S.sys=='DANGER'?0xf0463c:0x4a1a18);
+if(!selo)return;const u=selo.userData;let t=`${u.n}: ${u.d||''}`;if(u.k=='s'){const s=S.g[u.g];t=`${u.n} (${nm[u.g]} sensor): reading ${fmt(s.m)} AU, state ${s.st}, τ=${P.tau}s, noise σ=${P.sig}. Fault: ${$('ft').value}. ${u.d||''}`}$('sel').textContent=t}
+const fit=()=>Math.max(15,13.5/cam.aspect);let fitDone=false;
+function rs3(){if(!ok3)return;const cv=$('c3'),w=cv.parentElement.clientWidth-24,h=cv.clientHeight;if(w>0){R3.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();if(!fitDone){fitDone=true;rad=fit()}}}
+function r3(){if(!ok3)return;cam.position.set(tg.x+rad*Math.sin(ph)*Math.sin(th),tg.y+rad*Math.cos(ph),tg.z+rad*Math.sin(ph)*Math.cos(th));cam.lookAt(tg);
+const col={SAFE:0x2fd27a,PRE:0xf5b02e,DANGER:0xf0463c,FAULT:0x9b7cf0};sensors.forEach(m=>m.material.color.setHex(col[S.g[m.userData.g].st]));R3.render(sc3,cam)}
+/* ---------- boot ---------- */
+reset();init3();show(location.hash.slice(1)&&document.getElementById('v-'+location.hash.slice(1))?location.hash.slice(1):'cmd');
+say('THPS','Offline rule-based assistant ready. Try: "What is happening right now?" or "Why did the fan activate?"');
+requestAnimationFrame(loop);
+</script></body></html>
