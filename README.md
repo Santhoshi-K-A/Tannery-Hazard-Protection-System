@@ -145,14 +145,9 @@ This repository provides access to the project's technical materials:
 The current work is a student research prototype.
 
 Further development should include:
-- Testing under actual tannery environmental conditions.
 - Calibration and verification of sensor readings.
 - Extended hardware reliability testing.
-- Evaluation of communication reliability.
 - Further validation of computational models.
-- Assessment of practical deployment requirements.
-
-The prototype is not a certified industrial life-safety system.
 
 ## 11. Project Significance
 
@@ -168,6 +163,6 @@ It supports the broader objectives of:
 
 **Project:** Tannery Hazard Protection System  
 **Presented at:** National Children's Science Congress 2026  
-**Developer:** K. A. Santhoshi
+**Developer:** Santhoshi K. A, Janani K
 
 *This repository is maintained for academic, research and educational documentation.*
