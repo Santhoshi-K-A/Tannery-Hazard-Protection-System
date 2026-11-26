@@ -48,6 +48,7 @@ The project incorporates the following hardware components:
 | MAX98357A | Audio amplification |
 | Speaker | Voice response output |
 | Push button | Initiates voice recording |
+|ESP8266| Activates Alerts |
 
 *Component specifications and final hardware configurations are documented separately.*
 
